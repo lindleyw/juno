@@ -425,17 +425,21 @@ sub lookup_channel {
 }
 
 sub lookup_or_create_channel {
-    my ($pool, $name, $time) = @_;
+    my ($pool, $name, $time, $can_create) = @_;
 
     # if the channel exists, just join.
     my $channel = $pool->lookup_channel($name);
     return $channel if $channel;
 
-    # otherwise create a new one.
-    $channel = $pool->new_channel(
-        name => $name,
-        time => $time || time
-    );
+    # otherwise attempt to create a new one.
+    # TODO: replace '1' with server_config('users_can_create_channels') or similar
+    if (1 && $can_create) {
+      $channel = $pool->new_channel(
+				    name => $name,
+				    time => $time || time,
+				    $can_create
+				   );
+    }
 
     # second return value is whether it's a new channel.
     return wantarray ? ($channel, 1) : $channel;

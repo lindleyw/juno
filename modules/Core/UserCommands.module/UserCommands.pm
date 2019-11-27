@@ -535,7 +535,9 @@ sub _join {
         }
 
         # attempt to join.
-        my ($channel, $new) = $pool->lookup_or_create_channel($ch_name);
+	# If channel creation is restricted, opers who can see secret channels can also create new channels.
+        my ($channel, $new) = $pool->lookup_or_create_channel($ch_name, undef, $user->has_flag('see_secret'));
+	next unless defined $channel;
         $channel->attempt_join($user, $new, $channel_key);
     }
 
