@@ -432,8 +432,8 @@ sub lookup_or_create_channel {
     return $channel if $channel;
 
     # otherwise attempt to create a new one.
-    # TODO: replace '1' with server_config('users_can_create_channels') or similar
-    if (1 && $can_create) {
+    # The server config 'oper_new_channels = on' restricts new channels to ops only
+    if (!(conf('server','new_channels_oper') && !$can_create)) {
       $channel = $pool->new_channel(
 				    name => $name,
 				    time => $time || time,
